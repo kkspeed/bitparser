@@ -5,7 +5,7 @@ name:                Parsec-Bitstream
 version:             0.0.0.1
 synopsis:            Parsec integration for bitstream package
 -- description:         
-license:             GPL v3
+license:             GPL-3
 license-file:        LICENSE
 author:              Bruce Li
 maintainer:          leilmyxwz@gmail.com
