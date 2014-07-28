@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Data.Bitstream.Parser
     ( satisfy, bit1Bool, bits, getBits, getWord8, getWord16be, getWord32be, getWord64be
-    , getWord1, word8, word16be, string, skipNbytes, satisfyWord8
+    , getWord1, word8, word16be, string, skipNbytes, satisfyWord8, getBitsWord, shiftToNextByte
     ) where
 
 import Text.Parsec.Pos
@@ -61,6 +61,9 @@ getBits n = do
   then fail "Unexpected EOF!"
   else return bbs
 
+getBitsWord :: (Bits.Bits a, Integral a) => Int -> Parser a
+getBitsWord n = LS.toBits <$> getBits n
+
 word8 :: Word8 -> Parser Word8
 word8 w = satisfyWord8 (== w)
 
@@ -84,3 +87,9 @@ getWord64be = LS.toBits <$> getBits 64
 
 skipNbytes :: Int -> Parser ()
 skipNbytes n = replicateM_ n getWord8
+
+shiftToNextByte :: Parser ()
+shiftToNextByte = do
+  State _ pos _ <- getParserState
+  _ <- getBits $ (9 - (sourceColumn pos) `mod` 8) `mod` 8
+  return ()
